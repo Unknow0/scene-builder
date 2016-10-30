@@ -29,15 +29,7 @@ public class ListenerBuilder extends Builder
 				Class<?> clazz=Class.forName(value);
 				if(!EventListener.class.isAssignableFrom(clazz))
 					throw new SAXException("class '"+value+"' isn't an com.badlogic.gdx.scenes.scene2d.EventListener");
-				l=(EventListener)clazz.newInstance();
-				}
-			catch (IllegalAccessException e)
-				{
-				throw new SAXException(e);
-				}
-			catch (InstantiationException e)
-				{
-				throw new SAXException(e);
+				l=(EventListener)sceneBuilder.construct(clazz, attributes);
 				}
 			catch (ClassNotFoundException e)
 				{

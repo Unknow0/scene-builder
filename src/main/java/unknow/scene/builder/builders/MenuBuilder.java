@@ -84,6 +84,12 @@ public class MenuBuilder extends Builder
 				throw new SAXException("not a Menu '"+o+"'");
 			object.addMenu((Menu)o);
 			}
+
+		@Override
+		public Actor actor()
+			{
+			return object.getTable();
+			}
 		}
 
 	public static class MenuWrapper extends Wrapper<PopupMenu>
@@ -100,6 +106,12 @@ public class MenuBuilder extends Builder
 				throw new SAXException("not a MenuItem '"+o+"'");
 			object.addItem((MenuItem)o);
 			}
+
+		@Override
+		public Actor actor()
+			{
+			return object;
+			}
 		}
 
 	public static class MenuItemWrapper extends Wrapper<MenuItem>
@@ -115,6 +127,12 @@ public class MenuBuilder extends Builder
 			if(!(o instanceof PopupMenu))
 				throw new SAXException("not a PopupMenu '"+o+"'");
 			object.setSubMenu((PopupMenu)o);
+			}
+
+		@Override
+		public Actor actor()
+			{
+			return object;
 			}
 		}
 	}

@@ -7,8 +7,8 @@ import javax.xml.parsers.*;
 
 import org.xml.sax.*;
 
-import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
+import com.kotcrab.vis.ui.widget.*;
 
 /**
  * Entry point to build scene
@@ -20,15 +20,30 @@ public class SceneBuilder
 	/** actor created with a name */
 	private Map<String,Object> actors=new HashMap<String,Object>();
 
+	private Map<Class<?>,Constructor> contructors=new HashMap<Class<?>,Constructor>();
+
 	public SceneBuilder()
 		{
+		try
+			{
+			contructors.put(VisLabel.class, new Constructor.NameConstructor(VisLabel.class));
+			contructors.put(VisTextButton.class, new Constructor.NameConstructor(VisTextButton.class));
+			contructors.put(VisTextArea.class, new Constructor.NameConstructor(VisTextArea.class));
+			}
+		catch (NoSuchMethodException|SecurityException e)
+			{
+			throw new RuntimeException(e);
+			}
 		}
 
 	/**
 	 * @param listeners listeners to add
+	 * @throws SecurityException 
+	 * @throws NoSuchMethodException 
 	 */
 	public SceneBuilder(Map<String,EventListener> listeners)
 		{
+		this();
 		this.listeners.putAll(listeners);
 		}
 
@@ -55,17 +70,22 @@ public class SceneBuilder
 		return actors.get(name);
 		}
 
-	public Actor build(String xml) throws SAXException, IOException, ParserConfigurationException
+	public void addConstrtuctor(Class<?> clazz, Constructor constructor)
+		{
+		contructors.put(clazz, constructor);
+		}
+
+	public Object build(String xml) throws SAXException, IOException, ParserConfigurationException
 		{
 		return build(new InputSource(new StringReader(xml)));
 		}
 
-	public Actor build(InputStream is) throws SAXException, IOException, ParserConfigurationException
+	public Object build(InputStream is) throws SAXException, IOException, ParserConfigurationException
 		{
 		return build(new InputSource(is));
 		}
 
-	public Actor build(File file) throws FileNotFoundException, IOException, SAXException, ParserConfigurationException
+	public Object build(File file) throws FileNotFoundException, IOException, SAXException, ParserConfigurationException
 		{
 		try (InputStream is=new FileInputStream(file))
 			{
@@ -73,11 +93,55 @@ public class SceneBuilder
 			}
 		}
 
-	public Actor build(InputSource source) throws ParserConfigurationException, SAXException, IOException
+	/**
+	 * parse and construct the tree
+	 * @return the root element
+	 */
+	public Object build(InputSource source) throws ParserConfigurationException, SAXException, IOException
+		{
+		Wrapper<?> w=buildWrapper(source);
+		return w==null?null:w.object;
+		}
+
+	/**
+	 * parse and construct the tree
+	 * @return the root element
+	 */
+	public Wrapper<?> buildWrapper(InputSource source) throws ParserConfigurationException, SAXException, IOException
 		{
 		SAXParser parser=SAXParserFactory.newInstance().newSAXParser();
 		Handler h=new Handler(this);
 		parser.parse(source, h);
-		return (Actor)h.root();
+		return h.root();
+		}
+
+	/**
+	 * empty actor & listeners
+	 */
+	public void clear()
+		{
+		actors.clear();
+		listeners.clear();
+		}
+
+	public Object construct(Class<?> clazz, Attributes attr) throws SAXException
+		{
+		try
+			{
+			Constructor c=contructors.get(clazz);
+			return c==null?clazz.newInstance():c.construct(clazz, attr);
+			}
+		catch (IllegalAccessException e)
+			{
+			throw new SAXException(e);
+			}
+		catch (SecurityException e)
+			{
+			throw new SAXException(e);
+			}
+		catch (InstantiationException e)
+			{
+			throw new SAXException(e);
+			}
 		}
 	}

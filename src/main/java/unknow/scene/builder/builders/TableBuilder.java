@@ -24,26 +24,14 @@ public class TableBuilder extends Builder
 				if(!Table.class.isAssignableFrom(clazz))
 					throw new SAXException("class '"+value+"' isn't a Table");
 
-				a=(Table)clazz.newInstance();
+				a=(Table)sceneBuilder.construct(clazz, attributes);
 				}
 			else
 				a=new VisTable();
+			setValues(a, attributes);
 			if(parent!=null)
 				parent.add(a);
-			setValues(a, attributes);
 			return new TableWrapper(a);
-			}
-		catch (IllegalAccessException e)
-			{
-			throw new SAXException(e);
-			}
-		catch (SecurityException e)
-			{
-			throw new SAXException(e);
-			}
-		catch (InstantiationException e)
-			{
-			throw new SAXException(e);
 			}
 		catch (ClassNotFoundException e)
 			{
@@ -64,6 +52,20 @@ public class TableBuilder extends Builder
 			}
 		}
 
+	public static class CellBuilder extends Builder
+		{
+		@Override
+		public Wrapper<?> build(SceneBuilder sceneBuilder, Wrapper<?> parent, Attributes attributes) throws SAXException
+			{
+			if(!(parent instanceof TableWrapper))
+				throw new SAXException("cell isn't in table");
+			@SuppressWarnings("unchecked")
+			Cell<Actor> cell=((Table)parent.object()).add();
+			setValues(cell, attributes);
+			return new CellWrapper(cell);
+			}
+		}
+
 	public static class TableWrapper extends Wrapper<Table>
 		{
 		protected TableWrapper(Table actor)
@@ -75,6 +77,32 @@ public class TableBuilder extends Builder
 		public void add(Actor o) throws SAXException
 			{
 			object.add(o);
+			}
+
+		@Override
+		public Actor actor()
+			{
+			return object;
+			}
+		}
+
+	public static class CellWrapper extends Wrapper<Cell<Actor>>
+		{
+		protected CellWrapper(Cell<Actor> actor)
+			{
+			super(actor);
+			}
+
+		@Override
+		public void add(Actor o) throws SAXException
+			{
+			object.setActor(o);
+			}
+
+		@Override
+		public Actor actor()
+			{
+			return object.getActor();
 			}
 		}
 	}

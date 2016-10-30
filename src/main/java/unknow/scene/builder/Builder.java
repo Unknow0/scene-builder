@@ -2,6 +2,7 @@ package unknow.scene.builder;
 
 import java.util.*;
 
+import org.slf4j.*;
 import org.xml.sax.*;
 
 /**
@@ -9,6 +10,7 @@ import org.xml.sax.*;
  */
 public abstract class Builder
 	{
+	private static final Logger log=LoggerFactory.getLogger(Builder.class);
 	private static final List<String> EXCLUDED=Arrays.asList("class");
 
 	/**
@@ -30,7 +32,8 @@ public abstract class Builder
 			if(EXCLUDED.contains(name))
 				continue;
 			String value=attr.getValue(i);
-			s.set(o, name, value);
+			boolean set=s.set(o, name, value);
+			log.trace("{} setting value {}={} {}", o, name, value, set);
 			}
 		}
 	}

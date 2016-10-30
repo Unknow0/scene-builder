@@ -57,7 +57,7 @@ public class SceneBuilderTest implements ApplicationListener
 						Gdx.app.exit();
 						}
 				});
-			Actor build=builder.build(str);
+			Actor build=(Actor)builder.build(str);
 			stage.addActor(build);
 			System.out.println("done: "+build);
 			}

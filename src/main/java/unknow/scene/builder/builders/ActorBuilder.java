@@ -29,23 +29,11 @@ public class ActorBuilder extends Builder
 			if(!Actor.class.isAssignableFrom(clazz))
 				throw new SAXException("class '"+value+"' isn't an Actor");
 
-			Actor a=(Actor)clazz.newInstance();
+			Actor a=(Actor)sceneBuilder.construct(clazz, attributes);
+			setValues(a, attributes);
 			if(parent!=null)
 				parent.add(a);
-			setValues(a, attributes);
 			return new ActorWrapper(a);
-			}
-		catch (IllegalAccessException e)
-			{
-			throw new SAXException(e);
-			}
-		catch (SecurityException e)
-			{
-			throw new SAXException(e);
-			}
-		catch (InstantiationException e)
-			{
-			throw new SAXException(e);
 			}
 		catch (ClassNotFoundException e)
 			{
@@ -64,6 +52,12 @@ public class ActorBuilder extends Builder
 		public void add(Actor o) throws SAXException
 			{
 			throw new SAXException("Adding to non group actor "+object);
+			}
+
+		@Override
+		public Actor actor()
+			{
+			return object;
 			}
 		}
 	}

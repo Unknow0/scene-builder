@@ -19,6 +19,7 @@ public class Handler extends DefaultHandler
 		builders.put("actor", new ActorBuilder());
 		builders.put("table", new TableBuilder());
 		builders.put("row", new TableBuilder.RowBuilder());
+		builders.put("cell", new TableBuilder.CellBuilder());
 
 		builders.put("menuBar", new MenuBuilder.MenuBarBuilder());
 		builders.put("menu", new MenuBuilder());
@@ -26,6 +27,7 @@ public class Handler extends DefaultHandler
 		builders.put("separator", new MenuBuilder.SeparatorBuilder());
 
 		builders.put("listener", new ListenerBuilder());
+		builders.put("include", new IncludeBuilder());
 		}
 
 	/** stack of parsed tag */
@@ -68,8 +70,8 @@ public class Handler extends DefaultHandler
 	/**
 	 * @return the root element or null
 	 */
-	public Object root()
+	public Wrapper<?> root()
 		{
-		return root==null?null:root.object;
+		return root;
 		}
 	}
