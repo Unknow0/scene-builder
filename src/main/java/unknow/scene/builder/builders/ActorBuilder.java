@@ -43,7 +43,7 @@ public class ActorBuilder extends Builder
 
 	public static class ActorWrapper extends Wrapper<Actor>
 		{
-		protected ActorWrapper(Actor actor)
+		public ActorWrapper(Actor actor)
 			{
 			super(actor);
 			}

@@ -12,7 +12,7 @@ import unknow.scene.builder.*;
  * <dt>required param:</dt>
  * <dd>class</dd>
  * <dt>or</dt>
- * <dd>name</dd>
+ * <dd>ref-id</dd>
  * </dl>
  */
 public class ListenerBuilder extends Builder
@@ -38,9 +38,9 @@ public class ListenerBuilder extends Builder
 			}
 		else
 			{
-			value=attributes.getValue("", "name");
+			value=attributes.getValue("", "ref-id");
 			if(value==null)
-				throw new SAXException("listener must have a class or name");
+				throw new SAXException("listener must have a class or ref-id");
 			l=sceneBuilder.getListener(value);
 			if(l==null)
 				throw new SAXException("failed to found listener '"+value+"'");

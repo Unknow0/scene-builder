@@ -37,15 +37,23 @@ public class Handler extends DefaultHandler
 	/** the sceneBuilder to add actor & get listener */
 	private SceneBuilder sceneBuilder;
 
-	public Handler(SceneBuilder sceneBuilder)
+	public Handler(SceneBuilder sceneBuilder, Wrapper<?> root)
 		{
 		this.sceneBuilder=sceneBuilder;
+		if(root!=null)
+			{
+			this.root=root;
+			stack.offerFirst(this.root);
+			}
 		}
 
 	@Override
 	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException
 		{
 		Wrapper<?> parent=stack.peekFirst();
+
+		if("root".equals(qName)&&root==parent)
+			return;
 
 		Builder builder=builders.get(qName);
 		if(builder==null)
@@ -56,9 +64,9 @@ public class Handler extends DefaultHandler
 			root=a;
 		stack.offerFirst(a);
 
-		String name=attributes.getValue("", "name");
-		if(name!=null&&a!=null)
-			sceneBuilder.addActor(name, a.object);
+		String id=attributes.getValue("", "id");
+		if(id!=null&&a!=null)
+			sceneBuilder.addActor(id, a.object);
 		}
 
 	@Override

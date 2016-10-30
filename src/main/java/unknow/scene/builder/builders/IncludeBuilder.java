@@ -20,10 +20,7 @@ public class IncludeBuilder extends Builder
 			value=attributes.getValue("", "charset");
 			if(value!=null)
 				source.setEncoding(value);
-			Wrapper<?> w=sceneBuilder.buildWrapper(source);
-			if(w!=null&&parent!=null)
-				parent.add(w.actor());
-			return w;
+			return sceneBuilder.buildWrapper(source, parent);
 			}
 		catch (IOException e)
 			{

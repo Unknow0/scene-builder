@@ -31,4 +31,23 @@ public abstract class Wrapper<T>
 		return object;
 		}
 
+	public static class GroupWrapper extends Wrapper<Group>
+		{
+		public GroupWrapper(Group actor)
+			{
+			super(actor);
+			}
+
+		@Override
+		public void add(Actor o) throws SAXException
+			{
+			object.addActor(o);
+			}
+
+		@Override
+		public Actor actor()
+			{
+			return object;
+			}
+		}
 	}
