@@ -27,13 +27,13 @@ public class SceneBuilderTest implements ApplicationListener
 		Gdx.input.setInputProcessor(stage);
 		// @formatter:off
 		String str=
-				"<table name='root' fillParent='true' setDebug='true'>\n"
+				"<table xmlns='scene-builder' name='root' fillParent='true' setDebug='true'>\n"
 				+ "	<row left=''>\n"
 				+ "		<menuBar>"
 				+ "			<menu name='1'>"
 				+ "				<menuItem name='s1'/>"
 				+ "				<menuItem name='Quit'>"
-				+ "					<listener name='quit'/>"
+				+ "					<listener ref-id='quit'/>"
 				+ "				</menuItem>"
 				+ "			</menu>\n"
 				+ "			<menu name='2'>"

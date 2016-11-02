@@ -4,6 +4,8 @@ import java.io.*;
 import java.util.*;
 
 import javax.xml.parsers.*;
+import javax.xml.transform.stream.*;
+import javax.xml.validation.*;
 
 import org.xml.sax.*;
 
@@ -22,6 +24,20 @@ public class SceneBuilder
 	private Map<String,Object> actors=new HashMap<String,Object>();
 
 	private Map<Class<?>,Constructor> contructors=new HashMap<Class<?>,Constructor>();
+
+	private static final Schema schema;
+	static
+		{
+		SchemaFactory factory=SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
+		try
+			{
+			schema=factory.newSchema(new StreamSource(Thread.currentThread().getContextClassLoader().getResourceAsStream("scene-builder.xsd")));
+			}
+		catch (SAXException e)
+			{
+			throw new RuntimeException(e);
+			}
+		}
 
 	public SceneBuilder()
 		{
@@ -152,7 +168,10 @@ public class SceneBuilder
 	 */
 	public Wrapper<?> buildWrapper(InputSource source, Wrapper<?> root) throws ParserConfigurationException, SAXException, IOException
 		{
-		SAXParser parser=SAXParserFactory.newInstance().newSAXParser();
+		SAXParserFactory factory=SAXParserFactory.newInstance();
+		factory.setNamespaceAware(true);
+		factory.setSchema(schema);
+		SAXParser parser=factory.newSAXParser();
 		Handler h=new Handler(this, root);
 		parser.parse(source, h);
 		return h.root();

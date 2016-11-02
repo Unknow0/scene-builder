@@ -52,12 +52,12 @@ public class Handler extends DefaultHandler
 		{
 		Wrapper<?> parent=stack.peekFirst();
 
-		if("root".equals(qName)&&root==parent)
+		if("root".equals(localName)&&root==parent)
 			return;
 
-		Builder builder=builders.get(qName);
+		Builder builder=builders.get(localName);
 		if(builder==null)
-			throw new SAXException("invalid tag '"+qName+"'");
+			throw new SAXException("invalid tag '"+localName+"'");
 
 		Wrapper<?> a=builder.build(sceneBuilder, parent, attributes);
 		if(root==null)
@@ -73,6 +73,12 @@ public class Handler extends DefaultHandler
 	public void endElement(String uri, String localName, String qName) throws SAXException
 		{
 		stack.pollFirst();
+		}
+
+	@Override
+	public void error(SAXParseException e) throws SAXException
+		{
+		throw e;
 		}
 
 	/**
