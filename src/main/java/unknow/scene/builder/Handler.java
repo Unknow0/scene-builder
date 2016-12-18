@@ -16,6 +16,8 @@ public class Handler extends DefaultHandler
 	private static Map<String,Builder> builders=new HashMap<String,Builder>();
 	static
 		{
+		builders.put("group", new GroupBuilder());
+		builders.put("scroll", new ScrollBuilder());
 		builders.put("actor", new ActorBuilder());
 		builders.put("table", new TableBuilder());
 		builders.put("row", new TableBuilder.RowBuilder());
@@ -26,7 +28,7 @@ public class Handler extends DefaultHandler
 		builders.put("menuItem", new MenuBuilder.MenuItemBuilder());
 		builders.put("separator", new MenuBuilder.SeparatorBuilder());
 
-		builders.put("listener", new ListenerBuilder());
+		builders.put("inject", new InjectBuilder());
 		builders.put("include", new IncludeBuilder());
 		}
 
@@ -52,7 +54,7 @@ public class Handler extends DefaultHandler
 		{
 		Wrapper<?> parent=stack.peekFirst();
 
-		if("root".equals(localName)&&root==parent)
+		if("root".equals(localName)&&root==parent&&parent!=null)
 			return;
 
 		Builder builder=builders.get(localName);
@@ -84,8 +86,9 @@ public class Handler extends DefaultHandler
 	/**
 	 * @return the root element or null
 	 */
-	public Wrapper<?> root()
+	@SuppressWarnings("unchecked")
+	public <T> Wrapper<T> root()
 		{
-		return root;
+		return (Wrapper<T>)root;
 		}
 	}

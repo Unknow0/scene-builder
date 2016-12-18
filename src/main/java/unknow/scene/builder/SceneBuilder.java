@@ -9,21 +9,21 @@ import javax.xml.validation.*;
 
 import org.xml.sax.*;
 
+import unknow.scene.builder.builders.*;
+
 import com.badlogic.gdx.scenes.scene2d.*;
-import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.kotcrab.vis.ui.widget.*;
+import com.kotcrab.vis.ui.widget.file.*;
 
 /**
  * Entry point to build scene
  */
 public class SceneBuilder
 	{
-	/** listeners that can be used */
-	private Map<String,EventListener> listeners=new HashMap<String,EventListener>();
 	/** actor created with an id */
 	private Map<String,Object> actors=new HashMap<String,Object>();
 
-	private Map<Class<?>,Constructor> contructors=new HashMap<Class<?>,Constructor>();
+	private Map<Class<?>,Constructor<?>> constructors=new HashMap<Class<?>,Constructor<?>>();
 
 	private static final Schema schema;
 	static
@@ -43,9 +43,10 @@ public class SceneBuilder
 		{
 		try
 			{
-			contructors.put(VisLabel.class, new Constructor.NameConstructor(VisLabel.class));
-			contructors.put(VisTextButton.class, new Constructor.NameConstructor(VisTextButton.class));
-			contructors.put(VisWindow.class, new Constructor.NameConstructor(VisWindow.class));
+			constructors.put(VisLabel.class, new Constructor.NameConstructor<VisLabel>(VisLabel.class));
+			constructors.put(VisTextButton.class, new Constructor.NameConstructor<VisTextButton>(VisTextButton.class));
+			constructors.put(VisWindow.class, new Constructor.NameConstructor<VisWindow>(VisWindow.class));
+			constructors.put(FileChooser.class, new Constructor.FileChooserConstructor());
 			}
 		catch (NoSuchMethodException|SecurityException e)
 			{
@@ -58,18 +59,10 @@ public class SceneBuilder
 	 * @throws SecurityException 
 	 * @throws NoSuchMethodException 
 	 */
-	public SceneBuilder(Map<String,EventListener> listeners)
+	public SceneBuilder(Map<String,Object> actors)
 		{
 		this();
-		this.listeners.putAll(listeners);
-		}
-
-	/**
-	 * add listener
-	 */
-	public void addListener(String id, EventListener listener)
-		{
-		listeners.put(id, listener);
+		this.actors.putAll(actors);
 		}
 
 	public void addActor(String id, Object a)
@@ -77,65 +70,61 @@ public class SceneBuilder
 		actors.put(id, a);
 		}
 
-	public EventListener getListener(String id)
-		{
-		return listeners.get(id);
-		}
-
 	/**
 	 * get Actor with this id or null if not found
 	 */
-	public Object getActorNull(String id)
+	@SuppressWarnings("unchecked")
+	public <T> T getActorNull(String id)
 		{
-		return actors.get(id);
+		return (T)actors.get(id);
 		}
 
 	/**
 	 * get Actor with this id
 	 * @throws NoSuchElementException if no actor found
 	 */
-	public Object getActor(String id) throws NoSuchElementException
+	public <T> T getActor(String id) throws NoSuchElementException
 		{
-		Object o=actors.get(id);
+		T o=getActorNull(id);
 		if(o==null)
 			throw new NoSuchElementException("No actor with id '"+id+"'");
 		return o;
 		}
 
-	public void addConstrtuctor(Class<?> clazz, Constructor constructor)
+	public <T> void addConstrtuctor(Class<T> clazz, Constructor<T> constructor)
 		{
-		contructors.put(clazz, constructor);
+		constructors.put(clazz, constructor);
 		}
 
-	public Object build(String xml) throws SAXException, IOException, ParserConfigurationException
+	public <T> T build(String resource) throws SAXException, IOException, ParserConfigurationException
 		{
-		return build(new InputSource(new StringReader(xml)), null);
+		return build(resource, null);
 		}
 
-	public Object build(InputStream is) throws SAXException, IOException, ParserConfigurationException
+	public <T> T build(InputStream is) throws SAXException, IOException, ParserConfigurationException
 		{
-		return build(new InputSource(is), null);
+		return build(is, null);
 		}
 
-	public Object build(File file) throws FileNotFoundException, IOException, SAXException, ParserConfigurationException
+	public <T> T build(File file) throws FileNotFoundException, IOException, SAXException, ParserConfigurationException
 		{
-		try (InputStream is=new FileInputStream(file))
+		return build(file, null);
+		}
+
+	public <T> T build(String resource, Group root) throws SAXException, IOException, ParserConfigurationException
+		{
+		try (InputStream is=this.getClass().getClassLoader().getResourceAsStream(resource))
 			{
-			return build(is, null);
+			return build(new InputSource(is), root);
 			}
 		}
 
-	public Object build(String xml, Group root) throws SAXException, IOException, ParserConfigurationException
-		{
-		return build(new InputSource(new StringReader(xml)), root);
-		}
-
-	public Object build(InputStream is, Group root) throws SAXException, IOException, ParserConfigurationException
+	public <T> T build(InputStream is, Group root) throws SAXException, IOException, ParserConfigurationException
 		{
 		return build(new InputSource(is), root);
 		}
 
-	public Object build(File file, Group root) throws FileNotFoundException, IOException, SAXException, ParserConfigurationException
+	public <T> T build(File file, Group root) throws FileNotFoundException, IOException, SAXException, ParserConfigurationException
 		{
 		try (InputStream is=new FileInputStream(file))
 			{
@@ -147,7 +136,7 @@ public class SceneBuilder
 	 * parse and construct the tree
 	 * @return the root element
 	 */
-	public Object build(InputSource source) throws ParserConfigurationException, SAXException, IOException
+	public <T> T build(InputSource source) throws ParserConfigurationException, SAXException, IOException
 		{
 		return build(source, null);
 		}
@@ -156,9 +145,9 @@ public class SceneBuilder
 	 * parse and construct the tree
 	 * @return the root element
 	 */
-	public Object build(InputSource source, Group root) throws ParserConfigurationException, SAXException, IOException
+	public <T> T build(InputSource source, Group root) throws ParserConfigurationException, SAXException, IOException
 		{
-		Wrapper<?> w=buildWrapper(source, root==null?null:new Wrapper.GroupWrapper(root));
+		Wrapper<T> w=buildWrapper(source, root==null?null:new GroupBuilder.GroupWrapper(root));
 		return w==null?null:w.object;
 		}
 
@@ -166,7 +155,7 @@ public class SceneBuilder
 	 * parse and construct the tree
 	 * @return the root element
 	 */
-	public Wrapper<?> buildWrapper(InputSource source, Wrapper<?> root) throws ParserConfigurationException, SAXException, IOException
+	public <T> Wrapper<T> buildWrapper(InputSource source, Wrapper<?> root) throws ParserConfigurationException, SAXException, IOException
 		{
 		SAXParserFactory factory=SAXParserFactory.newInstance();
 		factory.setNamespaceAware(true);
@@ -178,19 +167,19 @@ public class SceneBuilder
 		}
 
 	/**
-	 * empty actor & listeners
+	 * empty actor
 	 */
 	public void clear()
 		{
 		actors.clear();
-		listeners.clear();
 		}
 
-	public Object construct(Class<?> clazz, Attributes attr) throws SAXException
+	@SuppressWarnings("unchecked")
+	public <T> T construct(Class<T> clazz, Attributes attr) throws SAXException
 		{
 		try
 			{
-			Constructor c=contructors.get(clazz);
+			Constructor<T> c=(Constructor<T>)constructors.get(clazz);
 			return c==null?clazz.newInstance():c.construct(clazz, attr);
 			}
 		catch (IllegalAccessException e)

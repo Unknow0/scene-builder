@@ -59,21 +59,21 @@ public class Setter
 	/**
 	 * set a parameter
 	 * @param o the object to act on.
-	 * @param param the param to set
+	 * @param name the param to set
 	 * @value the value (ignored in case of no arg param)
 	 */
-	public boolean set(Object o, String param, String value)
+	public boolean set(Object o, String name, String value)
 		{
 		boolean b=false;
-		List<Info> info=setter.get(param);
+		List<Info> info=setter.get(name);
 		if(info!=null&&!info.isEmpty())
 			b=trySet(o, info, value);
 		if(!b)
 			{
-			String s="set"+Character.toUpperCase(param.charAt(0))+param.substring(1);
+			String s="set"+Character.toUpperCase(name.charAt(0))+name.substring(1);
 			info=setter.get(s);
 			if(info!=null&&!info.isEmpty())
-				trySet(o, info, value);
+				b=trySet(o, info, value);
 			}
 		return b;
 		}
@@ -90,6 +90,56 @@ public class Setter
 				try
 					{
 					acc.invoke(o, i.id, i.cast(value));
+					return true;
+					}
+				catch (ClassCastException e)
+					{
+					it.remove();
+					}
+				}
+			else
+				{
+				acc.invoke(o, i.id);
+				return true;
+				}
+			}
+		return false;
+		}
+
+	/**
+	 * set a parameter
+	 * @param o the object to act on.
+	 * @param param the param to set
+	 * @value the value (ignored in case of no arg param)
+	 */
+	public boolean set(Object o, String name, Object value)
+		{
+		boolean b=false;
+		List<Info> info=setter.get(name);
+		if(info!=null&&!info.isEmpty())
+			b=trySet(o, info, value);
+		if(!b)
+			{
+			String s="set"+Character.toUpperCase(name.charAt(0))+name.substring(1);
+			info=setter.get(s);
+			if(info!=null&&!info.isEmpty())
+				b=trySet(o, info, value);
+			}
+		return b;
+		}
+
+	private boolean trySet(Object o, List<Info> info, Object value)
+		{
+		Iterator<Info> it=info.iterator();
+
+		while (it.hasNext())
+			{
+			Info i=it.next();
+			if(i.param!=null)
+				{
+				try
+					{
+					acc.invoke(o, i.id, value);
 					return true;
 					}
 				catch (ClassCastException e)

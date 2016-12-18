@@ -2,11 +2,19 @@
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="scene-builder" xmlns="scene-builder">
 	<xs:element name="root">
 		<xs:complexType>
-			<xs:choice maxOccurs="unbounded" minOccurs="0">
-				<xs:element ref="actor"/>
-				<xs:element ref="table"/>
-				<xs:element ref="include"/>
-			</xs:choice>
+			<xs:group maxOccurs="unbounded" minOccurs="0" ref="actorsGroup"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="group">
+		<xs:complexType>
+			<xs:group maxOccurs="unbounded" minOccurs="0" ref="actorsGroup"/>
+			<xs:attributeGroup ref="common"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="scroll">
+		<xs:complexType>
+			<xs:group maxOccurs="1" minOccurs="0" ref="actorsGroup"/>
+			<xs:attributeGroup ref="common"/>
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="include">
@@ -17,15 +25,9 @@
 	<xs:element name="actor">
 		<xs:complexType>
 			<xs:choice maxOccurs="unbounded" minOccurs="0">
-				<xs:element ref="listener"/>
+				<xs:element ref="inject"/>
 			</xs:choice>
 			<xs:attributeGroup ref="common"/>
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="listener">
-		<xs:complexType>
-			<xs:attribute name="class" type="xs:string"/>
-			<xs:attribute name="ref-id" type="xs:string"/>
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="table">
@@ -33,9 +35,7 @@
 			<xs:choice maxOccurs="unbounded" minOccurs="0">
 				<xs:element ref="row"/>
 				<xs:element ref="cell"/>
-				<xs:element ref="table"/>
-				<xs:element ref="actor"/>
-				<xs:element ref="include"/>
+				<xs:group ref="actorsGroup"/>
 			</xs:choice>
 			<xs:attributeGroup ref="common"/>
 		</xs:complexType>
@@ -44,21 +44,15 @@
 		<xs:complexType>
 			<xs:choice maxOccurs="unbounded" minOccurs="0">
 				<xs:element ref="cell"/>
-				<xs:element ref="table"/>
-				<xs:element ref="actor"/>
-				<xs:element ref="include"/>
+				<xs:group ref="actorsGroup"/>
 			</xs:choice>
-			<xs:anyAttribute processContents="lax"/>
+			<xs:attributeGroup ref="common"/>
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="cell">
 		<xs:complexType>
-			<xs:choice maxOccurs="unbounded" minOccurs="0">
-				<xs:element ref="table"/>
-				<xs:element ref="actor"/>
-				<xs:element ref="include"/>
-			</xs:choice>
-			<xs:anyAttribute processContents="lax"/>
+			<xs:group maxOccurs="1" minOccurs="0" ref="actorsGroup"/>
+			<xs:attributeGroup ref="common"/>
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="menuBar">
@@ -66,7 +60,7 @@
 			<xs:choice maxOccurs="unbounded" minOccurs="0">
 				<xs:element ref="menu"/>
 			</xs:choice>
-			<xs:anyAttribute processContents="lax"/>
+			<xs:attributeGroup ref="common"/>
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="menu">
@@ -75,22 +69,41 @@
 				<xs:element ref="menuItem"/>
 				<xs:element ref="separator"/>
 			</xs:choice>
-			<xs:anyAttribute processContents="lax"/>
+			<xs:attributeGroup ref="common"/>
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="menuItem">
 		<xs:complexType>
 			<xs:choice maxOccurs="unbounded" minOccurs="0">
 				<xs:element ref="menu"/>
-				<xs:element ref="listener"/>
+				<xs:element ref="inject"/>
 			</xs:choice>
-			<xs:anyAttribute processContents="lax"/>
+			<xs:attributeGroup ref="common"/>
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="separator"/>
+	<xs:element name="inject">
+		<xs:complexType>
+			<xs:attribute name="name" type="xs:string" use="required"/>
+			<xs:attribute name="ref-id" type="xs:string" use="required"/>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:group name="actorsGroup">
+		<xs:choice>
+			<xs:element ref="actor"/>
+			<xs:element ref="group"/>
+			<xs:element ref="table"/>
+			<xs:element ref="scroll"/>
+			<xs:element ref="include"/>
+			<xs:element ref="menuBar"/>
+			<xs:element ref="inject"/>
+		</xs:choice>
+	</xs:group>
 
 	<xs:attributeGroup name="common">
 		<xs:attribute name="class" type="xs:string"/>
+		<xs:attribute name="id" type="xs:string"/>
 		<xs:anyAttribute processContents="lax"/>
 	</xs:attributeGroup>
 </xs:schema>

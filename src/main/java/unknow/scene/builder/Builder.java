@@ -11,7 +11,7 @@ import org.xml.sax.*;
 public abstract class Builder
 	{
 	private static final Logger log=LoggerFactory.getLogger(Builder.class);
-	private static final List<String> EXCLUDED=Arrays.asList("class");
+	private static final List<String> EXCLUDED=Arrays.asList("class", "id");
 
 	/**
 	 * Build apropriate element
@@ -23,7 +23,7 @@ public abstract class Builder
 	 * call the setter from attribute.
 	 * (ignore attribute not found)
 	 */
-	protected void setValues(Object o, Attributes attr)
+	protected static void setValues(Object o, Attributes attr)
 		{
 		Setter s=Setter.getSetter(o.getClass());
 		for(int i=0; i<attr.getLength(); i++)
