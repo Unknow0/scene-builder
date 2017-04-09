@@ -25,6 +25,8 @@ public class SceneBuilder
 
 	private Map<Class<?>,Constructor<?>> constructors=new HashMap<Class<?>,Constructor<?>>();
 
+	private List<Listener> listener=new ArrayList<Listener>();
+
 	private static final Schema schema;
 	static
 		{
@@ -89,6 +91,11 @@ public class SceneBuilder
 		if(o==null)
 			throw new NoSuchElementException("No actor with id '"+id+"'");
 		return o;
+		}
+
+	public void addListener(Listener end)
+		{
+		listener.add(end);
 		}
 
 	public <T> void addConstrtuctor(Class<T> clazz, Constructor<T> constructor)
@@ -163,7 +170,10 @@ public class SceneBuilder
 		SAXParser parser=factory.newSAXParser();
 		Handler h=new Handler(this, root);
 		parser.parse(source, h);
-		return h.root();
+		Wrapper<T> r=h.root();
+		for(Listener e:listener)
+			e.end(this, r);
+		return r;
 		}
 
 	/**
@@ -194,5 +204,10 @@ public class SceneBuilder
 			{
 			throw new SAXException(e);
 			}
+		}
+
+	public static interface Listener
+		{
+		public void end(SceneBuilder builder, Wrapper<?> root);
 		}
 	}

@@ -27,7 +27,13 @@ public class TableBuilder extends Builder
 				a=(Table)sceneBuilder.construct(clazz, attributes);
 				}
 			else
-				a=new VisTable();
+				{
+				value=attributes.getValue("", "ref-id");
+				if(value!=null)
+					a=(Table)sceneBuilder.getActor(value);
+				else
+					a=new VisTable();
+				}
 			setValues(a, attributes);
 			if(parent!=null)
 				parent.add(a);

@@ -20,16 +20,28 @@ public class GroupBuilder extends Builder
 		{
 		try
 			{
+			Group a=null;
+
 			String value=attributes.getValue("", "class");
 			if(value==null)
-				throw new SAXException("missing class attribute");
+				{
+				value=attributes.getValue("", "ref-id");
+				if(value==null)
+					throw new SAXException("missing class or ref-id attribute");
+				Object actor=sceneBuilder.getActor(value);
+				if(!(actor instanceof Group))
+					throw new SAXException("id "+value+" isn't a Group");
+				a=(Group)actor;
+				}
+			else
+				{
+				Class<?> clazz=Class.forName(value);
 
-			Class<?> clazz=Class.forName(value);
+				if(!Group.class.isAssignableFrom(clazz))
+					throw new SAXException("class '"+value+"' isn't an Actor");
 
-			if(!Group.class.isAssignableFrom(clazz))
-				throw new SAXException("class '"+value+"' isn't an Actor");
-
-			Group a=(Group)sceneBuilder.construct(clazz, attributes);
+				a=(Group)sceneBuilder.construct(clazz, attributes);
+				}
 			setValues(a, attributes);
 			if(parent!=null)
 				parent.add(a);

@@ -20,16 +20,27 @@ public class ActorBuilder extends Builder
 		{
 		try
 			{
-			String value=attributes.getValue("", "class");
-			if(value==null)
-				throw new SAXException("missing class attribute");
+			Actor a;
+			String value=attributes.getValue("", "ref-id");
+			if(value!=null)
+				{
+				a=sceneBuilder.getActor(value);
+				if(a==null)
+					throw new SAXException("can't find actor with id '"+value+"'");
+				}
+			else
+				{
+				value=attributes.getValue("", "class");
+				if(value==null)
+					throw new SAXException("missing class attribute");
 
-			Class<?> clazz=Class.forName(value);
+				Class<?> clazz=Class.forName(value);
 
-			if(!Actor.class.isAssignableFrom(clazz))
-				throw new SAXException("class '"+value+"' isn't an Actor");
+				if(!Actor.class.isAssignableFrom(clazz))
+					throw new SAXException("class '"+value+"' isn't an Actor");
 
-			Actor a=(Actor)sceneBuilder.construct(clazz, attributes);
+				a=(Actor)sceneBuilder.construct(clazz, attributes);
+				}
 			setValues(a, attributes);
 			if(parent!=null)
 				parent.add(a);
