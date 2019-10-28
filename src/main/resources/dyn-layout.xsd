@@ -1,0 +1,113 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="dynLayout" xmlns="dynLayout">
+
+	<xs:element name="layout" type="WidgetGroup" />
+
+	<xs:group name="actorsGroup">
+		<xs:choice>
+			<xs:element name="actor" type="Actor" />
+			<xs:element name="button" type="Button" />
+			<xs:element name="group" type="Group" />
+			<xs:element name="input" type="Input" />
+			<xs:element name="label" type="Label" />
+			<xs:element name="table" type="Table" />
+			<xs:element name="scroll" type="Scroll" />
+		</xs:choice>
+	</xs:group>
+
+	<xs:complexType name="Actor">
+		<xs:attribute name="id" type="xs:string" />
+		<xs:attribute name="class" type="xs:string" />
+		<xs:attribute name="debug" type="xs:string" />
+		<xs:attribute name="x" type="xs:string" />
+		<xs:attribute name="y" type="xs:string" />
+		<xs:attribute name="width" type="xs:string" />
+		<xs:attribute name="height" type="xs:string" />
+	</xs:complexType>
+
+	<xs:complexType name="Button">
+		<xs:complexContent>
+			<xs:extension base="Actor">
+				<xs:attribute name="text" type="xs:string" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="Group">
+		<xs:complexContent>
+			<xs:extension base="Actor">
+				<xs:group ref="actorsGroup" minOccurs="0" maxOccurs="unbounded" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="Input">
+		<xs:complexContent>
+			<xs:extension base="Actor">
+				<xs:attribute name="password" type="xs:string" />
+				<xs:attribute name="length" type="xs:string" />
+				<xs:attribute name="placeholder" type="xs:string" />
+				<xs:attribute name="text" type="xs:string" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="Label">
+		<xs:complexContent>
+			<xs:extension base="Actor">
+				<xs:attribute name="text" type="xs:string" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="Scroll">
+		<xs:complexContent>
+			<xs:extension base="WidgetGroup">
+				<xs:attribute name="fade" type="xs:string" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="Table">
+		<xs:complexContent>
+			<xs:extension base="Actor">
+				<xs:sequence minOccurs="0" maxOccurs="unbounded">
+					<xs:element name="row">
+						<xs:complexType>
+							<xs:sequence minOccurs="0" maxOccurs="unbounded">
+								<xs:element name="cell">
+									<xs:complexType>
+										<xs:group ref="actorsGroup" />
+									</xs:complexType>
+								</xs:element>
+							</xs:sequence>
+							<xs:attributeGroup ref="cell" />
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+				<xs:attribute name="fillParent" type="xs:string" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:attributeGroup name="cell">
+		<xs:attribute name="align" type="xs:string" />
+		<xs:attribute name="colspan" type="xs:string" />
+		<xs:attribute name="rowspan" type="xs:string" />
+		<xs:attribute name="expand" type="xs:string" />
+		<xs:attribute name="expandY" type="xs:string" />
+		<xs:attribute name="expandX" type="xs:string" />
+		<xs:attribute name="fill" type="xs:string" />
+		<xs:attribute name="fillY" type="xs:string" />
+		<xs:attribute name="fillX" type="xs:string" />
+	</xs:attributeGroup>
+
+	<xs:complexType name="WidgetGroup">
+		<xs:complexContent>
+			<xs:extension base="Group">
+				<xs:attribute name="fillParent" type="xs:string" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+</xs:schema>
