@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="dynLayout" xmlns="dynLayout">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" targetNamespace="dynLayout" xmlns="dynLayout">
 
 	<xs:element name="layout" type="WidgetGroup" />
 
@@ -10,8 +10,9 @@
 			<xs:element name="group" type="Group" />
 			<xs:element name="input" type="Input" />
 			<xs:element name="label" type="Label" />
-			<xs:element name="table" type="Table" />
 			<xs:element name="scroll" type="Scroll" />
+			<xs:element name="table" type="Table" />
+			<xs:element name="widget-group" type="WidgetGroup" />
 		</xs:choice>
 	</xs:group>
 
@@ -23,12 +24,19 @@
 		<xs:attribute name="y" type="xs:string" />
 		<xs:attribute name="width" type="xs:string" />
 		<xs:attribute name="height" type="xs:string" />
+		<xs:attribute name="onchange" type="xs:string" />
+		<xs:attribute name="onload" type="xs:string" />
+		<xs:attribute name="onclick" type="xs:string" />
+		<xs:attribute name="onkeydown" type="xs:string" />
+		<xs:attribute name="onkeyup" type="xs:string" />
+		<xs:attribute name="onkeypress" type="xs:string" />
 	</xs:complexType>
 
 	<xs:complexType name="Button">
 		<xs:complexContent>
 			<xs:extension base="Actor">
 				<xs:attribute name="text" type="xs:string" />
+				<xs:attribute name="disabled" type="xs:string" />
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
@@ -48,6 +56,7 @@
 				<xs:attribute name="length" type="xs:string" />
 				<xs:attribute name="placeholder" type="xs:string" />
 				<xs:attribute name="text" type="xs:string" />
+				<xs:attribute name="disabled" type="xs:string" />
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
@@ -71,13 +80,14 @@
 	<xs:complexType name="Table">
 		<xs:complexContent>
 			<xs:extension base="Actor">
-				<xs:sequence minOccurs="0" maxOccurs="unbounded">
-					<xs:element name="row">
+				<xs:sequence>
+					<xs:element name="row" minOccurs="0" maxOccurs="unbounded">
 						<xs:complexType>
-							<xs:sequence minOccurs="0" maxOccurs="unbounded">
-								<xs:element name="cell">
+							<xs:sequence>
+								<xs:element name="cell" minOccurs="0" maxOccurs="unbounded">
 									<xs:complexType>
-										<xs:group ref="actorsGroup" />
+										<xs:group ref="actorsGroup" minOccurs="0"/>
+										<xs:attributeGroup ref="cell" />
 									</xs:complexType>
 								</xs:element>
 							</xs:sequence>
@@ -100,6 +110,8 @@
 		<xs:attribute name="fill" type="xs:string" />
 		<xs:attribute name="fillY" type="xs:string" />
 		<xs:attribute name="fillX" type="xs:string" />
+		<xs:attribute name="width" type="xs:string" />
+		<xs:attribute name="height" type="xs:string" />
 	</xs:attributeGroup>
 
 	<xs:complexType name="WidgetGroup">

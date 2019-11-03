@@ -15,9 +15,12 @@ public class BuilderButton extends BuilderActor
 	public void values(StringBuilder sb, Attributes attributes) throws ScriptException
 		{
 		super.values(sb, attributes);
-		String s=attributes.getValue("text");
-		if(s!=null)
-			append(sb, "setText", s);
+		String v=attributes.getValue("text");
+		if(v!=null)
+			append(sb, "setText", v);
+		v=attributes.getValue("disabled");
+		if(v!=null)
+			sb.append("a.setDisabled(").append(v).append(");");
 		}
 
 	@Override

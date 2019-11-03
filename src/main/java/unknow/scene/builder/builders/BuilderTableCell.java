@@ -20,8 +20,14 @@ public class BuilderTableCell extends BuilderActor
 	@Override
 	public void values(StringBuilder sb, Attributes attributes) throws ScriptException
 		{
-		super.values(sb, attributes);
-		String s=attributes.getValue("align");
+		String s=attributes.getValue("width");
+		if(s!=null)
+			sb.append("a.width("+s+");");
+		s=attributes.getValue("height");
+		if(s!=null)
+			sb.append("a.height("+s+");");
+		s=attributes.getValue("x");
+		s=attributes.getValue("align");
 		if(s!=null)
 			sb.append("a.align(com.badlogic.gdx.utils.Align."+s+");");
 		s=attributes.getValue("colspan");

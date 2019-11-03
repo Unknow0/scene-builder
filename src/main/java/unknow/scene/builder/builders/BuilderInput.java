@@ -26,6 +26,9 @@ public class BuilderInput extends BuilderActor
 		v=attributes.getValue("text");
 		if(v!=null)
 			append(sb, "setText", v);
+		v=attributes.getValue("disabled");
+		if(v!=null)
+			sb.append("a.setDisabled(").append(v).append(");");
 		}
 
 	@Override
