@@ -5,16 +5,13 @@ import org.xml.sax.SAXException;
 
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 
-public class BuilderTableRow extends BuilderTableCell
-	{
+public class BuilderTableRow extends BuilderTableCell {
 	@Override
-	public Object build(Object parent, Attributes attributes) throws SAXException
-		{
-		return ((Table)parent).row();
-		}
+	public Object build(Object parent, Attributes attributes) throws SAXException {
+		return ((Table) parent).row();
+	}
 
 	@Override
-	public void child(Object self, Object child) throws SAXException
-		{
-		}
+	public void child(Object self, Object child) throws SAXException {
 	}
+}

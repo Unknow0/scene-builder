@@ -1,7 +1,15 @@
 <?xml version="1.0"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" targetNamespace="dynLayout" xmlns="dynLayout">
 
-	<xs:element name="layout" type="WidgetGroup" />
+	<xs:element name="layout">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="WidgetGroup">
+					<xs:attribute name="init" type="xs:string" />
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
 
 	<xs:group name="actorsGroup">
 		<xs:choice>
@@ -86,7 +94,7 @@
 							<xs:sequence>
 								<xs:element name="cell" minOccurs="0" maxOccurs="unbounded">
 									<xs:complexType>
-										<xs:group ref="actorsGroup" minOccurs="0"/>
+										<xs:group ref="actorsGroup" minOccurs="0" />
 										<xs:attributeGroup ref="cell" />
 									</xs:complexType>
 								</xs:element>
