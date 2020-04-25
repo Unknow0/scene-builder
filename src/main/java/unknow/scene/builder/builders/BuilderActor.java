@@ -29,7 +29,7 @@ public class BuilderActor {
 		this.append = append;
 	}
 
-	public Object build(Object parent, Attributes attributes) throws SAXException {
+	public Object build(@SuppressWarnings("unused") Object parent, Attributes attributes) throws SAXException {
 		String v = attributes.getValue("class");
 		if (v == null) {
 			Object t = defaultValue.get();
