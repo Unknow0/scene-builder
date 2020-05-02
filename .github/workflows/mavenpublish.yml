@@ -4,10 +4,10 @@
 name: Maven Package
 
 on:
-	push:
-		tags:
-			- 'release/*'
-			  
+  push:
+    tags:
+      - 'release/*'
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -21,8 +21,8 @@ jobs:
         server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
         settings-path: ${{ github.workspace }} # location for the settings.xml file
 
-		- name: set version
-		  run: mvn versions:set -DnewVersion=${GITHUB_REF##*/}
+    - name: set version
+      run: mvn versions:set -DnewVersion=${GITHUB_REF##*/}
 
     - name: Build with Maven
       run: mvn -B package --file pom.xml
