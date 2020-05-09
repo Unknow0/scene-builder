@@ -5,6 +5,11 @@ import org.xml.sax.SAXException;
 
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 
+/**
+ * create a row in a table
+ * 
+ * @author unknow
+ */
 public class BuilderTableRow extends BuilderTableCell {
 	@Override
 	public Object build(Object parent, Attributes attributes) throws SAXException {

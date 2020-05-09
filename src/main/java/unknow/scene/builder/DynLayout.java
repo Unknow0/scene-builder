@@ -14,9 +14,6 @@ import javax.script.ScriptException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-import javax.xml.transform.stream.StreamSource;
-import javax.xml.validation.Schema;
-import javax.xml.validation.SchemaFactory;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -36,17 +33,12 @@ import unknow.scene.builder.DynLayoutContext.Attr;
 import unknow.scene.builder.LoadListener.LoadEvent;
 import unknow.scene.builder.builders.BuilderActor;
 
+/**
+ * A dynamic layout from an xml source
+ * 
+ * @author unknow
+ */
 public class DynLayout extends WidgetGroup {
-	private static final Schema schema;
-	static {
-		SchemaFactory factory = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
-		try {
-			schema = factory.newSchema(new StreamSource(Thread.currentThread().getContextClassLoader().getResourceAsStream("dyn-layout.xsd")));
-		} catch (SAXException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
 	private final ScriptEngine js = DynLayoutContext.MANAGER.getEngineByName("javascript");
 	private final Compilable c = (Compilable) js;
 	private final DynLayoutContext ctx;
@@ -56,18 +48,30 @@ public class DynLayout extends WidgetGroup {
 	private float prefHeight;
 	private float prefWidth;
 
+	/**
+	 * create new DynLayout
+	 * 
+	 * @param ctx the context to use
+	 */
 	public DynLayout(DynLayoutContext ctx) {
 		this.ctx = ctx;
 	}
 
+	/**
+	 * load the xml layout
+	 * 
+	 * @param source the xml source
+	 * @throws ParserConfigurationException
+	 * @throws SAXException
+	 * @throws IOException
+	 * @throws ScriptException
+	 */
 	public void load(InputSource source) throws ParserConfigurationException, SAXException, IOException, ScriptException {
 		js.eval("for(var k in this) { if(k[0]=='$') { delete this[k];}}");
 		values.clear();
 		clear();
 
 		SAXParserFactory factory = SAXParserFactory.newInstance();
-		factory.setNamespaceAware(true);
-		factory.setSchema(schema);
 		SAXParser parser = factory.newSAXParser();
 		Handler h = new Handler();
 		parser.parse(source, h);
@@ -78,6 +82,12 @@ public class DynLayout extends WidgetGroup {
 		Pools.free(obtain);
 	}
 
+	/**
+	 * get an actor by it's id
+	 * 
+	 * @param id actor id
+	 * @return the actor
+	 */
 	public Object get(String id) {
 		return js.get("$" + id);
 	}
