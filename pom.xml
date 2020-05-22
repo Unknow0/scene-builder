@@ -1,6 +1,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>unknow.scene-builder</groupId>
+	<groupId>unknow.common</groupId>
 	<artifactId>scene-builder</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 
@@ -8,13 +8,13 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
-	<distributionManagement>
-		<repository>
-			<id>github</id>
-			<name>GitHub Packages</name>
-			<url>https://maven.pkg.github.com/Unknow0/scene-builder</url>
-		</repository>
-	</distributionManagement>
+	<developers>
+		<developer>
+			<id>Unknow0</id>
+			<name>Unknow</name>
+			<email>unknow0@free.fr</email>
+		</developer>
+	</developers>
 
 	<build>
 		<plugins>
