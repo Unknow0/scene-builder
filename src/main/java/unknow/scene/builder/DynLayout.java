@@ -72,6 +72,7 @@ public class DynLayout extends WidgetGroup {
 		clear();
 
 		SAXParserFactory factory = SAXParserFactory.newInstance();
+		factory.setNamespaceAware(true);
 		SAXParser parser = factory.newSAXParser();
 		Handler h = new Handler();
 		parser.parse(source, h);
